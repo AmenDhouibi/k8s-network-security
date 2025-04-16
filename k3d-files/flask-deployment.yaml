@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-security-app
+  labels:
+    app: flask-security-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-security-app
+  template:
+    metadata:
+      labels:
+        app: flask-security-app
+    spec:
+      containers:
+        - name: flask-security-app
+          image: amendhouibi22/flask-security-app:v2
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: logs-volume
+              mountPath: /app/logs
+      volumes:
+        - name: logs-volume
+          persistentVolumeClaim:
+            claimName: flask-logs-pvc
+      imagePullSecrets:
+        - name: regcred
