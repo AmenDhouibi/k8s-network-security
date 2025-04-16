@@ -68,6 +68,33 @@ def get_geoip(ip):
 
 @app.route("/")
 def home():
+    start_time = time.time()
+
+    ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    method = request.method
+    path = request.path
+    user_agent = request.headers.get("User-Agent", "unknown")
+    headers = dict(request.headers)
+    geo_info = get_geoip(ip)
+
+    latency = round(time.time() - start_time, 5)
+
+    log_entry = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "method": method,
+        "remote_addr": ip,
+        "user_agent": user_agent,
+        "path": path,
+        "latency": latency,
+        "headers": headers,
+        "geo_info": geo_info,
+    }
+
+    with lock:
+        with open(log_file, "a") as f:
+            f.write(json.dumps(log_entry) + "\n")
+
+    update_metrics(ip, method, path, user_agent)
     return "Flask Security App is Running!"
 
 @app.route("/monitor")
