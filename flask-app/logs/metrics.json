@@ -1,15 +1,16 @@
 {
-    "total_requests": 4,
+    "total_requests": 7,
     "requests_per_ip": {
-        "172.17.0.1": 4
+        "172.17.0.1": 7
     },
     "methods": {
-        "GET": 4
+        "GET": 7
     },
     "paths": {
-        "/monitor": 4
+        "/monitor": 4,
+        "/": 3
     },
     "user_agents": {
-        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:137.0) Gecko/20100101 Firefox/137.0": 4
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:137.0) Gecko/20100101 Firefox/137.0": 7
     }
 }
