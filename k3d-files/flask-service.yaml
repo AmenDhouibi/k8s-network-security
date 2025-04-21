@@ -6,6 +6,7 @@ spec:
   selector:
     app: flask-security-app
   type: NodePort
+  externalTrafficPolicy: Local
   ports:
     - protocol: TCP
       port: 5000
