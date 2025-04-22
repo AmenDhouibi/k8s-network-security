@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: main
+  namespace: default
+spec:
+  serviceAccountName: prometheus-operator
+  externalUrl: http://localhost/prometheus
+  replicas: 1
+  serviceMonitorSelector:
+    matchLabels:
+      team: frontend
+  resources:
+    requests:
+      memory: 400Mi
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: main
+  namespace: default
+spec:
+  replicas: 1
+  externalUrl: http://localhost/alertmanager
+  resources:
+    requests:
+      memory: 400Mi
