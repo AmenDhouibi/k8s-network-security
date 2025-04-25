@@ -1,40 +1,41 @@
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
-  name: full-routing-vs
+  name: monitoring
   namespace: default
 spec:
+  gateways:
+  - monitoring-gateway
   hosts:
   - "*"
-  gateways:
-  - flask-gateway
   http:
-  # Route to Prometheus
   - match:
     - uri:
         prefix: /prometheus
+    rewrite:
+      uri: /
     route:
     - destination:
-        host: prometheus-operated.default.svc.cluster.local
+        host: prometheus-istio.default.svc.cluster.local
         port:
           number: 9090
-
-  # Route to Alertmanager
   - match:
     - uri:
         prefix: /alertmanager
+    rewrite:
+      uri: /
     route:
     - destination:
-        host: alertmanager-operated.default.svc.cluster.local
+        host: alertmanager-istio.default.svc.cluster.local
         port:
           number: 9093
-
-  # Default route to Flask app
   - match:
     - uri:
-        prefix: /
+        prefix: /flask
+    rewrite:
+      uri: /
     route:
     - destination:
-        host: flask-security-service
+        host: flask-security-service.default.svc.cluster.local
         port:
           number: 5000

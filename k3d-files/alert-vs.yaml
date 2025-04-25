@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: alertmanager-vs
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - alertmanager-gateway
+  http:
+  - route:
+    - destination:
+        host: alertmanager-main.default.svc.cluster.local
+        port:
+          number: 9093

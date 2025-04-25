@@ -1,0 +1,57 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: monitoring-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: monitoring
+  namespace: default
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - monitoring-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /prometheus
+      rewrite:
+        uri: /prometheus
+      route:
+        - destination:
+            host: prometheus-main.default.svc.cluster.local
+            port:
+              number: 9090
+    - match:
+        - uri:
+            prefix: /alertmanager
+      rewrite:
+        uri: /alertmanager
+      route:
+        - destination:
+            host: alertmanager-main.default.svc.cluster.local
+            port:
+              number: 9093
+    - match:
+        - uri:
+            prefix: /flask
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: flask-security-service.default.svc.cluster.local
+            port:
+              number: 5000

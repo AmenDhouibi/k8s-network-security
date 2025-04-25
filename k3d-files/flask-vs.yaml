@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: flask-vs
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - flask-gateway
+  http:
+  - route:
+    - destination:
+        host: flask-security-service.default.svc.cluster.local
+        port:
+          number: 5000

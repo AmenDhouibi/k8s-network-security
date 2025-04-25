@@ -1,29 +1,27 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-main
-  labels:
-    prometheus: main
+  name: prometheus-istio
+  namespace: default
 spec:
   type: ClusterIP
+  selector:
+    app.kubernetes.io/name: prometheus
   ports:
-    - name: web
+    - name: http
       port: 9090
       targetPort: web
-  selector:
-    prometheus: main
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: alertmanager-main
-  labels:
-    alertmanager: main
+  name: alertmanager-istio
+  namespace: default
 spec:
   type: ClusterIP
-  ports:
-    - name: web
-      port: 9093
-      targetPort: web
   selector:
     alertmanager: main
+  ports:
+    - name: http
+      port: 9093
+      targetPort: web
