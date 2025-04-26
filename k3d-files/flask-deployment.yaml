@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: flask-security-app
-          image: amendhouibi22/flask-security-app:v2
+          image: amendhouibi22/flask-security-app:v3
           ports:
             - containerPort: 5000
           volumeMounts:
