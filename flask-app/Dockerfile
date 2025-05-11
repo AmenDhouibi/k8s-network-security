@@ -7,7 +7,7 @@ COPY . .
 RUN mkdir -p logs
 
 
-RUN cp app_v5.py app.py
+RUN cp app_v6.py app.py
 
 
 RUN pip install --no-cache-dir -r requirements.txt

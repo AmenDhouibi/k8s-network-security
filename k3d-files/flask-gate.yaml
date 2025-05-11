@@ -8,7 +8,7 @@ spec:
     istio: ingressgateway
   servers:
   - port:
-      number: 82
+      number: 80
       name: http-flask
       protocol: HTTP
     hosts:
