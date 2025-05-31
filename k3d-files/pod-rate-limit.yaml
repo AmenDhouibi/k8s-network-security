@@ -1,0 +1,39 @@
+# pod-global-rate-limit.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: flask-pod-global-rate-limit
+  namespace: default
+spec:
+  workloadSelector:
+    labels:
+      app: flask-security-app
+  configPatches:
+  - applyTo: HTTP_FILTER
+    match:
+      context: SIDECAR_INBOUND
+      listener:
+        filterChain:
+          filter:
+            name: "envoy.filters.network.http_connection_manager"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: envoy.filters.http.local_ratelimit
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+          stat_prefix: pod_global_rate_limiter
+          token_bucket:
+            fill_interval: 1s
+            max_tokens: 100
+            tokens_per_fill: 100
+          filter_enabled:
+            runtime_key: pod_global_rl_enabled
+            default_value:
+              numerator: 100
+              denominator: HUNDRED
+          filter_enforced:
+            runtime_key: pod_global_rl_enforced
+            default_value:
+              numerator: 100
+              denominator: HUNDRED

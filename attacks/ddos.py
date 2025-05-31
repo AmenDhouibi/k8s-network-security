@@ -5,7 +5,7 @@ import time
 url = "http://localhost:30500/"
 
 for _ in range(2000):
-    ip = f"192.168.{random.randint(0, 255)}.{random.randint(1, 254)}"
+    ip = f"192.168.1.{random.randint(1, 254)}"
     headers = {
         "X-Forwarded-For": ip,
         "User-Agent": f"BotSim/{random.randint(1,5)}.0"

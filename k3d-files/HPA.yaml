@@ -9,7 +9,7 @@ spec:
     kind: Deployment
     name: flask-security-app
   minReplicas: 2
-  maxReplicas: 20
+  maxReplicas: 50
   metrics:
   - type: Resource
     resource:
