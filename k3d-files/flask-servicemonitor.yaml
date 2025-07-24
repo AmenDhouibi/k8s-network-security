@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: flask-app-monitor
+  namespace: monitoring             # ← must live where your Prometheus Operator is watching
+  labels:
+    release: cluster-metrics        # ← matches the default serviceMonitorSelector (empty {} → “all”), 
+                                     # but it’s good practice to scope to your release
+spec:
+  namespaceSelector:
+    matchNames:
+      - default                     # ← scrape Services in the "default" namespace
+  selector:
+    matchLabels:
+      app: flask-security-service   # ← your Service’s label
+  endpoints:
+    - port: http                    # ← the “name:” of the port in your Service
+      path: /metrics
+      interval: 15s

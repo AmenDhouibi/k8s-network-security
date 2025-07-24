@@ -1,0 +1,43 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: prometheus-vs
+  namespace: default
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - monitoring-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /prometheus
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: prometheus-operated
+            port:
+              number: 9090
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: alertmanager-vs
+  namespace: default
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - monitoring-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /alertmanager
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: alertmanager-operated
+            port:
+              number: 9093

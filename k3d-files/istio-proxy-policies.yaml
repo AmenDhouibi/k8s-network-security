@@ -1,0 +1,60 @@
+# istio-proxy-policies.yaml
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: flask-local-rate-limit
+  namespace: default
+spec:
+  workloadSelector:
+    labels:
+      app: flask-security-app
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: SIDECAR_INBOUND
+        listener:
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: envoy.filters.http.local_ratelimit
+          typedConfig:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.local_ratelimit.v3.LocalRateLimit
+            statPrefix: http_local_rate_limiter
+            tokenBucket:
+              maxTokens: 20
+              tokensPerFill: 10
+              fillInterval: 1s
+            filterEnabled:
+              runtimeKey: local_rate_limit_enabled
+              defaultValue:
+                numerator: 100
+                denominator: HUNDRED
+            filterEnforced:
+              runtimeKey: local_rate_limit_enforced
+              defaultValue:
+                numerator: 100
+                denominator: HUNDRED
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: flask-circuit-breaker
+  namespace: default
+spec:
+  host: flask-security-service.default.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+      http:
+        http1MaxPendingRequests: 20
+        maxRequestsPerConnection: 10
+    outlierDetection:
+      consecutive5xx:      5     # eject after 5 consecutive 5xx
+      interval:            10s   # check every 10s
+      baseEjectionTime:    30s   # eject for 30s
+      maxEjectionPercent:  50    # never eject more than 50% of endpoints
